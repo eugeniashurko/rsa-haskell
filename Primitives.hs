@@ -31,7 +31,6 @@ encryptString e n ms
   | getNextPossibleCharBlockSize n == 0 = [-1]
   | otherwise = encryptBlocks e n (getMessageBlocks ms (getNextPossibleCharBlockSize n))
 
-
 -- bs = block list
 encryptBlocks :: Integer -> Integer -> [Integer] -> [Integer]
 encryptBlocks e n bs

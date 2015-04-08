@@ -1,4 +1,3 @@
-
 module Keygen 
     (
         generateKeyPair,
@@ -14,13 +13,15 @@ import Control.Monad.Fix
 import Control.Monad
 import Data.Functor
 
--- # type definitions
+
+
+---- Type definitions
 type PubKey = (Integer, Integer)
 type PrivKey = (Integer, Integer)
 type Prime = Integer
 
--- # private functions
 
+---- Private functions: some utils
 -- define a three tuple
 fst3 :: (a, b, c) -> a
 fst3 (a,b,c) = a
@@ -31,37 +32,10 @@ snd3 (a,b,c) = b
 thd3 :: (a, b, c) -> c
 thd3 (a,b,c) = c
 
--- Some useless thing
 boolFromIO :: IO Bool -> Bool
 boolFromIO = boolFromIO
 
-
--- Interaction to get fitting primes and exponent
--- Control.Monad.Fix idea from StackOverflow: http://stackoverflow.com/a/13301611
-enterExpPrimes :: IO (Integer, Prime, Prime)
-enterExpPrimes =
-    fix $ \again -> do
-        putStrLn "Enter exponent (leave blank for default [65537])"
-        exp <- getLine
-        let e
-              | exp == "" = 65537 :: Integer
-              | otherwise = read exp :: Integer
-        putStrLn "Enter first prime: "
-        prime <- getLine
-        let p = read prime :: Prime
-        putStrLn "Enter second prime: "
-        prime <- getLine
-        let q = read prime :: Prime
-            phi = (p-1)*(q-1)
-        do 
-            let isPrimeP = millerRabinPrimality p
-                isPrimeQ = millerRabinPrimality q
-            if ((gcd e phi) == 1 && boolFromIO isPrimeP  && boolFromIO isPrimeQ) then 
-                return (e, p, q)
-            else
-               do putStrLn "ERROR: Exponent and primes don't match the requirements [(gcd e phi]) <> 1]"
-                  again
-
+-- Generates random Prime number of 'blockSize' bits
 generateRandomPrime :: Int -> IO Prime
 generateRandomPrime blockSize =
     do
@@ -72,7 +46,7 @@ generateRandomPrime blockSize =
         else 
             generateRandomPrime blockSize
 
-
+-- Generates p q ane returns fixed exponent 65537
 generateEPQ :: IO (Integer, Prime, Prime)
 generateEPQ = 
     do
@@ -87,15 +61,16 @@ generateEPQ =
             generateEPQ
 
 
--- # public functions
+----- Public functions
 -- Interaction to generate key pair which are stored in pub.key/priv.key
+-- TODO: Add file paths as arguments
 generateKeyPair :: IO ()
 generateKeyPair =
     do putStrLn "---------------------------------------------------------------------------"
-       putStrLn "-------------------------- Key generation started -------------------------"
+       putStrLn "-------------------- Generating public/private keys -----------------------"
        putStrLn "---------------------------------------------------------------------------"
-       writeFile ("pub.key") ""
-       writeFile ("priv.key") ""
+       writeFile ("examples/pub.key") ""
+       writeFile ("examples/priv.key") ""
        expPrimes <- generateEPQ :: IO (Integer, Prime, Prime)
        let e = fst3 expPrimes
            p = snd3 expPrimes
@@ -107,4 +82,4 @@ generateKeyPair =
            resultPriv = (d, n) :: PrivKey
        writeFile ("pub.key") (show resultPub)
        writeFile ("priv.key") (show resultPriv)
-       putStrLn ("Key pair saved in pub.key and priv.key")
+       putStrLn ("Key pair saved in 'examples/pub.key' and 'examples/priv.key'")

@@ -1,2 +1,1 @@
-And just to raise the level of tinfoil-hatness we have going on here, I am going to leave this here: "RSA" is a popular (the only?) Haskell implementation of the RSA assymetric encryption algorithm. It is a widely used public/private keypair encryption algorithm.
-Other than the fact that it relies on the RdRand instruction through the entropy package, the developer of the RSA package is Galois, Inc, a known military contractor; they help the government on cyber warfare projects. So the developer of the implementation of the most widely used assymetric encryption algorithm, which relies on a library that uses RdRand solely as the source of random data, helps the US defense in cyber warfare. Draw your own conclusions.
+Hello world!

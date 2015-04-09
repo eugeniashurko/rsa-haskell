@@ -14,14 +14,12 @@ import Control.Monad
 import Data.Functor
 
 
-
----- Type definitions
+-- Type definitions
 type PubKey = (Integer, Integer)
 type PrivKey = (Integer, Integer)
 type Prime = Integer
 
-
----- Private functions: some utils
+-- Private functions: some utils
 -- define a three tuple
 fst3 :: (a, b, c) -> a
 fst3 (a,b,c) = a
@@ -61,16 +59,17 @@ generateEPQ =
             generateEPQ
 
 
------ Public functions
--- Interaction to generate key pair which are stored in pub.key/priv.key
--- TODO: Add file paths as arguments
-generateKeyPair :: IO ()
-generateKeyPair =
-    do putStrLn "---------------------------------------------------------------------------"
-       putStrLn "-------------------- Generating public/private keys -----------------------"
-       putStrLn "---------------------------------------------------------------------------"
-       writeFile ("examples/pub.key") ""
-       writeFile ("examples/priv.key") ""
+-- Public functions
+-- Interaction to generate key pair which are stored in 
+-- pub.key/priv.key
+generateKeyPair :: String -> String -> IO ()
+generateKeyPair pubPath privPath =
+    do putStrLn "------------------------------------------"
+       putStrLn "----- Generating public/private keys -----"
+       putStrLn "..........It may take some time..........."
+       putStrLn "------------------------------------------"
+       writeFile (pubPath) ""
+       writeFile (privPath) ""
        expPrimes <- generateEPQ :: IO (Integer, Prime, Prime)
        let e = fst3 expPrimes
            p = snd3 expPrimes
@@ -80,6 +79,7 @@ generateKeyPair =
            d = inverseMod e phi :: Integer
            resultPub = (e, n) :: PubKey
            resultPriv = (d, n) :: PrivKey
-       writeFile ("pub.key") (show resultPub)
-       writeFile ("priv.key") (show resultPriv)
-       putStrLn ("Key pair saved in 'examples/pub.key' and 'examples/priv.key'")
+       writeFile (pubPath) (show resultPub)
+       writeFile (privPath) (show resultPriv)
+       putStrLn ("Key pair saved in '" ++ pubPath ++
+                                 "' and '" ++ pubPath ++ "'")

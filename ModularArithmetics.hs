@@ -31,12 +31,16 @@ powerMod :: Integer -> Integer -> Integer -> Integer
 powerMod b e m = powerModExec b (toBin e) m 1
 
  -- Modular exponentiation execution
-powerModExec :: Integer -> [Integer] -> Integer -> Integer -> Integer
+powerModExec :: Integer -> [Integer] -> Integer -> 
+                Integer -> Integer
 powerModExec _ [] _ c = c
-powerModExec b (1:e) m c = powerModExec b e m ((c^2 `mod ` m)*b `mod` m)
-powerModExec b (0:e) m c = powerModExec b e m (c^2 `mod` m)
+powerModExec b (1:e) m c = powerModExec b e m 
+                                ((c^2 `mod ` m)*b `mod` m)
+powerModExec b (0:e) m c = powerModExec b e m 
+                                (c^2 `mod` m)
 
--- Convert Integer to an Integer list which represents original Integer in binary
+-- Convert Integer to an Integer list which represents 
+-- original Integer in binary
 toBin :: Integer -> [Integer]
 toBin 0 = [0]
 toBin 1 = [1]
@@ -46,7 +50,8 @@ toBin n
 
 -- Generates random number in specified range
 generateNumberInRange :: Integer -> Integer -> IO Integer
-generateNumberInRange mn mx = randIntegerUptoNMinusOneSuchThat (\a -> a > mn) mx
+generateNumberInRange mn mx = randIntegerUptoNMinusOneSuchThat 
+                                            (\a -> a > mn) mx
 
 generateNewNumber :: Int -> IO Integer
 generateNewNumber n = 
@@ -66,14 +71,15 @@ primeMR _ 2 = return True
 primeMR 0 _ = return True
 primeMR k n = let
         (r,s) = decomp (n-1)
-        f = \ x -> takeWhile (/= 1) (map (\ j -> powerMod x (2^j*s) n) [0..r])
+        f = \ x -> takeWhile (/= 1) (map 
+                        (\ j -> powerMod x (2^j*s) n) [0..r])
     in
         do
             a <- (generateNumberInRange 1 (n-1))
             if powerMod a (n-1) n /= 1
                 then return False
                 else
-                    if powerMod a s n /= 1 && last (f a) /= (n-1)
+                    if powerMod a s n/=1 && last (f a)/=(n-1)
                         then return False
                         else primeMR (k-1) n
 

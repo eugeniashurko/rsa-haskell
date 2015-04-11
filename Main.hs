@@ -3,7 +3,35 @@ module Main ( main ) where
 import Keygen
 import Primitives
 import System.Environment ( getArgs )
+import qualified Data.ByteString.Lazy as BS
 
+
+decrypt :: String -> String -> String -> IO ()
+decrypt privKeyFileName cypherFileName decryptedFileName =
+    do 
+       stringFileContents <- readFile (privKeyFileName)
+       let priv = read stringFileContents :: PrivKey
+           d = fst priv
+           n = snd priv
+       cipher <- readFile (cypherFileName)
+       let c = read cipher :: [Integer]
+       writeFile (decryptedFileName) ""
+       BS.writeFile (decryptedFileName)  (decryptString d n c)
+       putStr "Decrypted text stored in: "
+       putStrLn (decryptedFileName)
+
+encrypt :: String -> String -> String -> IO ()
+encrypt pubKeyFileName messageFileName cypherTextName =
+    do 
+       stringFileContents <- readFile (pubKeyFileName)
+       let pub = read stringFileContents :: PubKey
+           e = fst pub
+           n = snd pub
+       message <- BS.readFile(messageFileName)
+       writeFile (cypherTextName) ""
+       writeFile (cypherTextName) 
+                    (show (encryptString e n message))
+       putStrLn ("Cyphertext stored in: " ++ cypherTextName)
 
 callKeygen :: [String] -> IO ()
 callKeygen [pubPath, privPath] = do

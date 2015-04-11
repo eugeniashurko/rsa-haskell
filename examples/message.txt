@@ -1,1 +1,15 @@
-Hello world!
+You might equivalently implement this using take and drop instead of splitAt. Now, how can we translate this to work on ByteStrings? Well, the ByteString interface offers take, drop, splitAt, append, and cons; the only thing we haven't quite got available is the pattern matching that we did in the x:ending part above. Luckily, ByteString does offer something similar:
+
+uncons :: ByteString -> Maybe (Word8, ByteString)
+So, using that, we can write a new onNth function that works for ByteStrings:
+
+second :: (b -> c) -> (a, b) -> (a, c)
+second f (a, b) = (a, f b)
+
+onNth :: Int -> (Word8 -> Word8) -> (ByteString -> ByteString)
+onNth n f bs = case second uncons (splitAt n bs) of
+    (beginning, Just (x, ending)) -> append beginning (cons (f x) ending)
+    _ -> bs -- again, for out-of-bounds cases
+Finally, we can discuss what function we should use as the f :: Word8 -> Word8 argument above. Although you talk about text above, I will point out that you shouldn't be using ByteString for text anyway (ByteStrings are sequences of bytes, not sequences of Chars). Therefore, if you have chosen to use ByteString, you must be talking about bytes, not text. ;-)
+
+Therefore, you really meant to ask about a function which decreases a byte by one, presumably wrapping around on a boundary. subtract 1 is a function that does exactly that, so to convert pack [97, 97, 97, 97, 97] to pack [97, 97, 96, 97, 97], you might write onNth 2 (subtract 1). Reads almost like English!

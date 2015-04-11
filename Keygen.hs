@@ -9,18 +9,15 @@ module Keygen
 import ModularArithmetics
 
 import Control.Monad.Fix
---import Control.Conditional
 import Control.Monad
 import Data.Functor
 
 
--- Type definitions
 type PubKey = (Integer, Integer)
 type PrivKey = (Integer, Integer)
 type Prime = Integer
 
--- Private functions: some utils
--- define a three tuple
+
 fst3 :: (a, b, c) -> a
 fst3 (a,b,c) = a
 
@@ -33,7 +30,6 @@ thd3 (a,b,c) = c
 boolFromIO :: IO Bool -> Bool
 boolFromIO = boolFromIO
 
--- Generates random Prime number of 'blockSize' bits
 generateRandomPrime :: Int -> IO Prime
 generateRandomPrime blockSize =
     do
@@ -58,10 +54,7 @@ generateEPQ =
         else 
             generateEPQ
 
-
--- Public functions
--- Interaction to generate key pair which are stored in 
--- pub.key/priv.key
+-- Generates key pair which are stored in files
 generateKeyPair :: String -> String -> IO ()
 generateKeyPair pubPath privPath =
     do putStrLn "------------------------------------------"
